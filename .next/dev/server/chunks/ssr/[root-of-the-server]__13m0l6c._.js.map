@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 10, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/%EB%8F%99%EC%97%B4/Desktop/main/DJSHS/2026/%ED%95%98%EB%B0%98%EA%B8%B0/%EC%A0%95%EB%B3%B4%EA%B3%BC%ED%95%99%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/talent-booth-reservation/app/page.js"],"sourcesContent":["import { booths } from \"@/data/booths\";\r\nimport BoothCard from \"@/components/BoothCard\";\r\n\r\nexport default function Home() {\r\n  return (\r\n    <main>\r\n      <h1>재능나눔 부스 예약</h1>\r\n\r\n      <div className=\"booth-list\">\r\n        {booths.map((booth) => (\r\n          <BoothCard\r\n            key={booth.id}\r\n            booth={booth}\r\n          />\r\n        ))}\r\n      </div>\r\n    </main>\r\n  );\r\n}"],"names":["Home","className","booths","map","booth","BoothCard","id"],"mappings":";;;;;;;;;;;;;;;;;;AAGe,SAASA;IACtB,qBACE,qOAAC;;0BACC,oOAAC;0BAAG;;0BAEJ,oOAAC;gBAAIC,WAAU;0BACZC,OAAOC,GAAG,CAAC,CAACC,sBACX,oOAACC;wBAECD,OAAOA;uBADFA,MAAME,EAAE;;;;AAOzB"}}]
+}
