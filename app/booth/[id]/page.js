@@ -1,11 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 
 import { booths } from "../../../data/booths";
 import SessionCard from "../../../components/SessionCard";
+
+import {
+  addReservation,
+  getReservations,
+} from "../../../utils/reservation";
 
 export default function BoothDetailPage() {
   const params = useParams();
@@ -14,17 +19,46 @@ export default function BoothDetailPage() {
   const booth = booths.find((booth) => booth.id === id);
 
   const [selectedSession, setSelectedSession] = useState(null);
+  const [reservations, setReservations] = useState([]);
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    setReservations(getReservations());
+  }, []);
 
   if (!booth) {
     return (
       <main>
         <h1>부스를 찾을 수 없습니다.</h1>
-
-        <Link href="/">
-          목록으로 돌아가기
-        </Link>
+        <Link href="/">목록으로 돌아가기</Link>
       </main>
     );
+  }
+
+  function getReservedCount(sessionId) {
+    return reservations.filter(
+      (reservation) => reservation.sessionId === sessionId
+    ).length;
+  }
+
+  function handleReserve() {
+    if (selectedSession === null) {
+      setMessage("예약할 회차를 선택해주세요.");
+      return;
+    }
+
+    const session = booth.sessions.find(
+      (session) => session.id === selectedSession
+    );
+
+    const result = addReservation(booth, session);
+
+    setMessage(result.message);
+
+    if (result.success) {
+      setReservations(getReservations());
+      setSelectedSession(null);
+    }
   }
 
   return (
@@ -47,27 +81,40 @@ export default function BoothDetailPage() {
         <h2>회차 선택</h2>
 
         <div className="session-list">
-          {booth.sessions.map((session) => (
-            <SessionCard
-              key={session.id}
-              session={session}
-              selected={selectedSession === session.id}
-              onSelect={setSelectedSession}
-            />
-          ))}
+          {booth.sessions.map((session) => {
+            const localReserved = getReservedCount(session.id);
+
+            return (
+              <SessionCard
+                key={session.id}
+                session={session}
+                localReserved={localReserved}
+                selected={selectedSession === session.id}
+                onSelect={(sessionId) => {
+                  setSelectedSession(sessionId);
+                  setMessage("");
+                }}
+              />
+            );
+          })}
         </div>
 
-        {selectedSession && (
-          <div className="selection-result">
-            선택한 회차:{" "}
-            {
-              booth.sessions.find(
-                (session) => session.id === selectedSession
-              ).round
-            }
-            회차
+        <button
+          className="reserve-button"
+          onClick={handleReserve}
+        >
+          예약하기
+        </button>
+
+        {message && (
+          <div className="reservation-message">
+            {message}
           </div>
         )}
+
+        <Link href="/schedule" className="schedule-link">
+          내 시간표 보기 →
+        </Link>
       </div>
     </main>
   );

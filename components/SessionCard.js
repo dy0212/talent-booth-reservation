@@ -1,7 +1,14 @@
 "use client";
 
-export default function SessionCard({ session, selected, onSelect }) {
-  const remaining = session.capacity - session.reserved;
+export default function SessionCard({
+  session,
+  localReserved = 0,
+  selected,
+  onSelect,
+}) {
+  const remaining =
+    session.capacity - session.reserved - localReserved;
+
   const isFull = remaining <= 0;
 
   return (
@@ -29,7 +36,9 @@ export default function SessionCard({ session, selected, onSelect }) {
       </div>
 
       {selected && !isFull && (
-        <div className="selected-text">선택됨</div>
+        <div className="selected-text">
+          선택됨
+        </div>
       )}
     </button>
   );
