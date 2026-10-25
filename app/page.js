@@ -1,17 +1,51 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-import { booths } from "../data/booths";
+import { supabase } from "../lib/supabase";
 import BoothCard from "../components/BoothCard";
 import SearchBar from "../components/SearchBar";
 
 export default function Home() {
+  const [booths, setBooths] = useState([]);
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  useEffect(() => {
+    loadBooths();
+  }, []);
+
+  async function loadBooths() {
+    setLoading(true);
+
+    const { data, error } = await supabase
+      .from("booths")
+      .select("*")
+      .order("id", { ascending: true });
+
+    if (error) {
+      console.error(error);
+      setErrorMessage("부스 정보를 불러오지 못했습니다.");
+      setLoading(false);
+      return;
+    }
+
+    setBooths(data ?? []);
+    setLoading(false);
+  }
 
   const filteredBooths = booths.filter((booth) =>
     booth.name.toLowerCase().includes(search.toLowerCase())
   );
+
+  if (loading) {
+    return (
+      <main>
+        <p>부스 정보를 불러오는 중...</p>
+      </main>
+    );
+  }
 
   return (
     <main>
@@ -21,6 +55,12 @@ export default function Home() {
         value={search}
         onChange={setSearch}
       />
+
+      {errorMessage && (
+        <div className="reservation-message">
+          {errorMessage}
+        </div>
+      )}
 
       <div className="booth-list">
         {filteredBooths.length > 0 ? (

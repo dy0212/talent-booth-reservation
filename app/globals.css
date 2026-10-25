@@ -257,3 +257,209 @@ h1 {
     gap: 15px;
   }
 }
+
+/* 관리자 페이지 */
+
+.admin-main {
+  max-width: 1100px;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 30px;
+}
+
+.admin-header h1 {
+  margin-bottom: 5px;
+}
+
+.admin-header p {
+  margin: 0;
+  color: #666;
+}
+
+.admin-header button,
+.admin-actions button,
+.admin-form button,
+.add-session-button,
+.admin-login button {
+  padding: 10px 14px;
+
+  border: 1px solid #ccc;
+  border-radius: 8px;
+
+  background-color: white;
+
+  cursor: pointer;
+}
+
+.admin-header button:hover,
+.admin-actions button:hover,
+.admin-form button:hover,
+.add-session-button:hover {
+  background-color: #f0f0f0;
+}
+
+.admin-section {
+  margin-bottom: 30px;
+
+  padding: 25px;
+
+  background-color: white;
+
+  border: 1px solid #ddd;
+  border-radius: 12px;
+}
+
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-form input,
+.admin-form textarea,
+.admin-login input {
+  box-sizing: border-box;
+
+  width: 100%;
+
+  padding: 12px;
+
+  border: 1px solid #ccc;
+  border-radius: 8px;
+
+  font-size: 15px;
+}
+
+.admin-form textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.admin-form label {
+  display: flex;
+  flex-direction: column;
+
+  gap: 6px;
+}
+
+.admin-form-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.admin-form-buttons button:first-child {
+  background-color: #222;
+  color: white;
+}
+
+.admin-booth-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.admin-booth-card {
+  padding: 20px;
+
+  border: 1px solid #ddd;
+  border-radius: 10px;
+}
+
+.admin-booth-header {
+  display: flex;
+  justify-content: space-between;
+
+  gap: 20px;
+}
+
+.admin-booth-header h3 {
+  margin-top: 0;
+}
+
+.admin-actions {
+  display: flex;
+  gap: 8px;
+
+  align-items: flex-start;
+}
+
+.admin-session-list {
+  margin-top: 20px;
+
+  padding-top: 15px;
+
+  border-top: 1px solid #eee;
+}
+
+.admin-session-row {
+  margin-bottom: 10px;
+
+  padding: 12px;
+
+  border-radius: 8px;
+  background-color: #f7f7f7;
+}
+
+.admin-session-row > div:first-child {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+
+  margin-bottom: 10px;
+}
+
+.add-session-button {
+  margin-top: 10px;
+}
+
+.admin-login {
+  max-width: 450px;
+
+  margin: 80px auto;
+
+  padding: 30px;
+
+  background-color: white;
+
+  border: 1px solid #ddd;
+  border-radius: 12px;
+}
+
+.admin-login form {
+  display: flex;
+  flex-direction: column;
+
+  gap: 12px;
+}
+
+.admin-login button {
+  background-color: #222;
+  color: white;
+}
+
+.admin-message {
+  margin: 15px 0;
+
+  padding: 12px;
+
+  background-color: #f2f2f2;
+
+  border-radius: 8px;
+}
+
+@media (max-width: 700px) {
+  .admin-header,
+  .admin-booth-header {
+    flex-direction: column;
+  }
+
+  .admin-session-row > div:first-child {
+    flex-direction: column;
+    gap: 5px;
+  }
+}

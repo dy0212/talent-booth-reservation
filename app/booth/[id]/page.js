@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 
-import { booths } from "../../../data/booths";
+import { supabase } from "../../../lib/supabase";
 import SessionCard from "../../../components/SessionCard";
 
 import {
@@ -16,23 +16,66 @@ export default function BoothDetailPage() {
   const params = useParams();
   const id = Number(params.id);
 
-  const booth = booths.find((booth) => booth.id === id);
-
+  const [booth, setBooth] = useState(null);
   const [selectedSession, setSelectedSession] = useState(null);
   const [reservations, setReservations] = useState([]);
+
+  const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
 
   useEffect(() => {
+    loadBooth();
     setReservations(getReservations());
-  }, []);
+  }, [id]);
 
-  if (!booth) {
-    return (
-      <main>
-        <h1>부스를 찾을 수 없습니다.</h1>
-        <Link href="/">목록으로 돌아가기</Link>
-      </main>
-    );
+  async function loadBooth() {
+    setLoading(true);
+
+    const { data, error } = await supabase
+      .from("booths")
+      .select(`
+        id,
+        name,
+        description,
+        location,
+        sessions (
+          id,
+          round,
+          start_time,
+          end_time,
+          capacity,
+          reserved
+        )
+      `)
+      .eq("id", id)
+      .single();
+
+    if (error) {
+      console.error(error);
+      setBooth(null);
+      setLoading(false);
+      return;
+    }
+
+    const convertedBooth = {
+      ...data,
+
+      sessions: (data.sessions ?? [])
+        .sort((a, b) => a.round - b.round)
+        .map((session) => ({
+          id: session.id,
+          round: session.round,
+
+          startTime: session.start_time.slice(0, 5),
+          endTime: session.end_time.slice(0, 5),
+
+          capacity: session.capacity,
+          reserved: session.reserved,
+        })),
+    };
+
+    setBooth(convertedBooth);
+    setLoading(false);
   }
 
   function getReservedCount(sessionId) {
@@ -61,6 +104,26 @@ export default function BoothDetailPage() {
     }
   }
 
+  if (loading) {
+    return (
+      <main>
+        <p>부스 정보를 불러오는 중...</p>
+      </main>
+    );
+  }
+
+  if (!booth) {
+    return (
+      <main>
+        <h1>부스를 찾을 수 없습니다.</h1>
+
+        <Link href="/">
+          목록으로 돌아가기
+        </Link>
+      </main>
+    );
+  }
+
   return (
     <main>
       <Link href="/" className="back-link">
@@ -82,14 +145,17 @@ export default function BoothDetailPage() {
 
         <div className="session-list">
           {booth.sessions.map((session) => {
-            const localReserved = getReservedCount(session.id);
+            const localReserved =
+              getReservedCount(session.id);
 
             return (
               <SessionCard
                 key={session.id}
                 session={session}
                 localReserved={localReserved}
-                selected={selectedSession === session.id}
+                selected={
+                  selectedSession === session.id
+                }
                 onSelect={(sessionId) => {
                   setSelectedSession(sessionId);
                   setMessage("");
@@ -112,7 +178,10 @@ export default function BoothDetailPage() {
           </div>
         )}
 
-        <Link href="/schedule" className="schedule-link">
+        <Link
+          href="/schedule"
+          className="schedule-link"
+        >
           내 시간표 보기 →
         </Link>
       </div>

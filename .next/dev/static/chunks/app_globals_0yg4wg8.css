@@ -1,5 +1,6 @@
 /* [project]/app/globals.css [app-client] (css) */
 body {
+  color: #222;
   background-color: #f5f5f5;
   margin: 0;
   font-family: Arial, sans-serif;
@@ -13,6 +14,21 @@ main {
 
 h1 {
   margin-bottom: 30px;
+}
+
+.search-bar {
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  outline: none;
+  width: 100%;
+  margin-bottom: 24px;
+  padding: 14px 16px;
+  font-size: 16px;
+}
+
+.search-bar:focus {
+  border-color: #555;
 }
 
 .booth-list {
@@ -41,12 +57,6 @@ h1 {
   font-weight: bold;
   text-decoration: none;
   display: inline-block;
-}
-
-@media (max-width: 700px) {
-  .booth-list {
-    grid-template-columns: 1fr;
-  }
 }
 
 .back-link {
@@ -118,27 +128,257 @@ h1 {
   font-weight: bold;
 }
 
-.selection-result {
-  background-color: #f5f5f5;
-  border-radius: 8px;
-  margin-top: 20px;
+.reserve-button {
+  color: #fff;
+  cursor: pointer;
+  background-color: #222;
+  border: none;
+  border-radius: 10px;
+  width: 100%;
+  margin-top: 24px;
   padding: 15px;
+  font-size: 16px;
   font-weight: bold;
 }
 
-.search-bar {
-  box-sizing: border-box;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  outline: none;
-  width: 100%;
-  margin-bottom: 24px;
-  padding: 14px 16px;
-  font-size: 16px;
+.reserve-button:hover {
+  background-color: #444;
 }
 
-.search-bar:focus {
-  border-color: #555;
+.reservation-message {
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  margin-top: 16px;
+  padding: 14px;
+  font-weight: bold;
+}
+
+.schedule-link {
+  margin-top: 20px;
+  font-weight: bold;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.schedule-page {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 30px;
+}
+
+.reservation-list {
+  flex-direction: column;
+  gap: 16px;
+  display: flex;
+}
+
+.reservation-card {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  display: flex;
+}
+
+.reservation-card h2 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.reservation-card p {
+  margin: 5px 0;
+}
+
+.cancel-button {
+  cursor: pointer;
+  background-color: #ddd;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+}
+
+.cancel-button:hover {
+  background-color: #ccc;
+}
+
+@media (max-width: 700px) {
+  .booth-list {
+    grid-template-columns: 1fr;
+  }
+
+  .reservation-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+}
+
+.admin-main {
+  max-width: 1100px;
+}
+
+.admin-header {
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  display: flex;
+}
+
+.admin-header h1 {
+  margin-bottom: 5px;
+}
+
+.admin-header p {
+  color: #666;
+  margin: 0;
+}
+
+.admin-header button, .admin-actions button, .admin-form button, .add-session-button, .admin-login button {
+  cursor: pointer;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+
+.admin-header button:hover, .admin-actions button:hover, .admin-form button:hover, .add-session-button:hover {
+  background-color: #f0f0f0;
+}
+
+.admin-section {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  margin-bottom: 30px;
+  padding: 25px;
+}
+
+.admin-form {
+  flex-direction: column;
+  gap: 12px;
+  display: flex;
+}
+
+.admin-form input, .admin-form textarea, .admin-login input {
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 100%;
+  padding: 12px;
+  font-size: 15px;
+}
+
+.admin-form textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.admin-form label {
+  flex-direction: column;
+  gap: 6px;
+  display: flex;
+}
+
+.admin-form-buttons {
+  gap: 10px;
+  display: flex;
+}
+
+.admin-form-buttons button:first-child {
+  color: #fff;
+  background-color: #222;
+}
+
+.admin-booth-list {
+  flex-direction: column;
+  gap: 20px;
+  display: flex;
+}
+
+.admin-booth-card {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.admin-booth-header {
+  justify-content: space-between;
+  gap: 20px;
+  display: flex;
+}
+
+.admin-booth-header h3 {
+  margin-top: 0;
+}
+
+.admin-actions {
+  align-items: flex-start;
+  gap: 8px;
+  display: flex;
+}
+
+.admin-session-list {
+  border-top: 1px solid #eee;
+  margin-top: 20px;
+  padding-top: 15px;
+}
+
+.admin-session-row {
+  background-color: #f7f7f7;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  padding: 12px;
+}
+
+.admin-session-row > div:first-child {
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 10px;
+  display: flex;
+}
+
+.add-session-button {
+  margin-top: 10px;
+}
+
+.admin-login {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  max-width: 450px;
+  margin: 80px auto;
+  padding: 30px;
+}
+
+.admin-login form {
+  flex-direction: column;
+  gap: 12px;
+  display: flex;
+}
+
+.admin-login button {
+  color: #fff;
+  background-color: #222;
+}
+
+.admin-message {
+  background-color: #f2f2f2;
+  border-radius: 8px;
+  margin: 15px 0;
+  padding: 12px;
+}
+
+@media (max-width: 700px) {
+  .admin-header, .admin-booth-header {
+    flex-direction: column;
+  }
+
+  .admin-session-row > div:first-child {
+    flex-direction: column;
+    gap: 5px;
+  }
 }
 
 /*# sourceMappingURL=app_globals_0yg4wg8.css.map*/
