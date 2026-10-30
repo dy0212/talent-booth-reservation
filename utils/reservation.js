@@ -52,3 +52,104 @@ export async function getSessionReservationCounts(boothId) {
 
   return counts;
 }
+
+export async function getMyReservations() {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return {
+      success: false,
+      reservations: [],
+      message: "로그인이 필요합니다.",
+    };
+  }
+
+  const { data, error } = await supabase
+    .from("reservations")
+    .select(`
+      id,
+      created_at,
+      session_id,
+      sessions (
+        id,
+        round,
+        start_time,
+        end_time,
+        booths (
+          id,
+          name,
+          location
+        )
+      )
+    `);
+
+  if (error) {
+    console.error(error);
+
+    return {
+      success: false,
+      reservations: [],
+      message: "예약 정보를 불러오지 못했습니다.",
+    };
+  }
+
+  const reservations = (data ?? [])
+    .map((reservation) => ({
+      id: reservation.id,
+      sessionId: reservation.session_id,
+
+      round: reservation.sessions?.round,
+      startTime:
+        reservation.sessions?.start_time?.slice(0, 5) ?? "",
+      endTime:
+        reservation.sessions?.end_time?.slice(0, 5) ?? "",
+
+      boothId: reservation.sessions?.booths?.id,
+      boothName:
+        reservation.sessions?.booths?.name ?? "알 수 없는 부스",
+      location:
+        reservation.sessions?.booths?.location ?? "",
+    }))
+    .sort((a, b) =>
+      a.startTime.localeCompare(b.startTime)
+    );
+
+  return {
+    success: true,
+    reservations,
+  };
+}
+
+export async function cancelReservation(reservationId) {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return {
+      success: false,
+      message: "로그인이 필요합니다.",
+    };
+  }
+
+  const { error } = await supabase
+    .from("reservations")
+    .delete()
+    .eq("id", reservationId);
+
+  if (error) {
+    console.error(error);
+
+    return {
+      success: false,
+      message: "예약 취소에 실패했습니다.",
+    };
+  }
+
+  return {
+    success: true,
+    message: "예약을 취소했습니다.",
+  };
+}
