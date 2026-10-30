@@ -5,6 +5,9 @@ export default function SessionCard({
   dbReserved = 0,
   selected,
   onSelect,
+  myReservation = null,
+  onCancel,
+  canceling = false,
 }) {
   const remaining =
     session.capacity -
@@ -12,18 +15,24 @@ export default function SessionCard({
     dbReserved;
 
   const isFull = remaining <= 0;
+  const isReservedByMe = myReservation !== null;
 
   return (
-    <button
+    <div
       className={`session-card ${
         selected ? "selected" : ""
-      } ${isFull ? "full" : ""}`}
+      } ${isFull ? "full" : ""} ${
+        isReservedByMe ? "my-reservation" : ""
+      }`}
       onClick={() => {
-        if (!isFull) {
+        if (
+          !isFull &&
+          !isReservedByMe &&
+          onSelect
+        ) {
           onSelect(session.id);
         }
       }}
-      disabled={isFull}
     >
       <div className="session-header">
         <strong>{session.round}회차</strong>
@@ -39,11 +48,36 @@ export default function SessionCard({
         {session.startTime} ~ {session.endTime}
       </div>
 
-      {selected && !isFull && (
-        <div className="selected-text">
-          선택됨
+      {isReservedByMe ? (
+        <div className="reserved-session-area">
+          <span className="reserved-badge">
+            예약됨
+          </span>
+
+          <button
+            className="inline-cancel-button"
+            disabled={canceling}
+            onClick={(e) => {
+              e.stopPropagation();
+
+              if (onCancel) {
+                onCancel(myReservation.id);
+              }
+            }}
+          >
+            {canceling
+              ? "취소 중..."
+              : "예약 취소"}
+          </button>
         </div>
+      ) : (
+        selected &&
+        !isFull && (
+          <div className="selected-text">
+            선택됨
+          </div>
+        )
       )}
-    </button>
+    </div>
   );
 }

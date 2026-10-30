@@ -568,3 +568,49 @@ h1 {
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+.session-card.my-reservation {
+  border-color: #222;
+  background-color: #f7f7f7;
+  cursor: default;
+}
+
+.reserved-session-area {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-top: 12px;
+}
+
+.reserved-badge {
+  padding: 6px 10px;
+
+  border-radius: 20px;
+
+  background-color: #222;
+  color: white;
+
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.inline-cancel-button {
+  padding: 8px 12px;
+
+  border: 1px solid #ccc;
+  border-radius: 8px;
+
+  background-color: white;
+
+  cursor: pointer;
+}
+
+.inline-cancel-button:hover {
+  background-color: #eee;
+}
+
+.inline-cancel-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
