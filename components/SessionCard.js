@@ -27,7 +27,7 @@ export default function SessionCard({
   return (
     <div
       className={`session-card ${selected ? "selected" : ""
-        } ${isFull ? "full" : ""} ${isReservedByMe ? "my-reservation" : ""
+        } ${isFull && !isReservedByMe ? "full" : ""} ${isReservedByMe ? "my-reservation" : ""
         } ${timeConflict ? "time-conflict" : ""}`}
       onClick={() => {
         if (!unavailable && onSelect) {
