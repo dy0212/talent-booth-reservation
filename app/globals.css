@@ -463,3 +463,82 @@ h1 {
     gap: 5px;
   }
 }
+/* 참가자 로그인 */
+
+.login-box {
+  max-width: 420px;
+  margin: 40px auto;
+  padding: 30px;
+
+  background-color: white;
+
+  border: 1px solid #ddd;
+  border-radius: 12px;
+}
+
+.login-box h1 {
+  margin-top: 0;
+}
+
+.login-box form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.login-box input {
+  box-sizing: border-box;
+
+  width: 100%;
+  padding: 13px;
+
+  border: 1px solid #ccc;
+  border-radius: 8px;
+
+  font-size: 15px;
+}
+
+.login-box form button {
+  padding: 13px;
+
+  border: none;
+  border-radius: 8px;
+
+  background-color: #222;
+  color: white;
+
+  font-size: 15px;
+  font-weight: bold;
+
+  cursor: pointer;
+}
+
+.login-box form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.login-mode-button {
+  width: 100%;
+
+  margin-top: 15px;
+  padding: 10px;
+
+  border: none;
+
+  background: none;
+
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.main-actions {
+  display: flex;
+  gap: 18px;
+  margin-bottom: 20px;
+}
+
+.main-actions a {
+  text-decoration: none;
+  font-weight: bold;
+}

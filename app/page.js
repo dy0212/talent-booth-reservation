@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 import { supabase } from "../lib/supabase";
 import BoothCard from "../components/BoothCard";
@@ -50,6 +51,16 @@ export default function Home() {
   return (
     <main>
       <h1>재능나눔 부스 예약</h1>
+
+      <div className="main-actions">
+        <Link href="/login">
+          로그인 / 회원가입
+        </Link>
+
+        <Link href="/schedule">
+          내 시간표
+        </Link>
+      </div>
 
       <SearchBar
         value={search}
