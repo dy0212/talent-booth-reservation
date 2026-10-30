@@ -118,12 +118,7 @@ export default function BoothDetailPage() {
       return;
     }
 
-    setMyReservations(
-      result.reservations.filter(
-        (reservation) =>
-          reservation.boothId === id
-      )
-    );
+    setMyReservations(result.reservations);
   }
 
   function findMyReservation(sessionId) {
@@ -133,6 +128,19 @@ export default function BoothDetailPage() {
           reservation.sessionId === sessionId
       ) ?? null
     );
+  }
+
+  function hasTimeConflict(session) {
+    return myReservations.some((reservation) => {
+      if (reservation.sessionId === session.id) {
+        return false;
+      }
+
+      return (
+        session.startTime < reservation.endTime &&
+        reservation.startTime < session.endTime
+      );
+    });
   }
 
   async function handleReserve() {
@@ -238,49 +246,38 @@ export default function BoothDetailPage() {
         <h2>회차 선택</h2>
 
         <div className="session-list">
-          {booth.sessions.map(
-            (session) => {
-              const myReservation =
-                findMyReservation(
-                  session.id
-                );
+          {booth.sessions.map((session) => {
+            const myReservation =
+              findMyReservation(session.id);
 
-              return (
-                <SessionCard
-                  key={session.id}
-                  session={session}
-                  dbReserved={
-                    reservationCounts[
-                      session.id
-                    ] ?? 0
-                  }
-                  selected={
-                    selectedSession ===
-                    session.id
-                  }
-                  onSelect={(sessionId) => {
-                    setSelectedSession(
-                      sessionId
-                    );
+            const timeConflict =
+              hasTimeConflict(session);
 
-                    setMessage("");
-                  }}
-                  myReservation={
-                    myReservation
-                  }
-                  onCancel={
-                    handleCancel
-                  }
-                  canceling={
-                    myReservation
-                      ? cancelingId ===
-                        myReservation.id
-                      : false
-                  }
-                />
-              );
-            }
-          )}
+            return (
+              <SessionCard
+                key={session.id}
+                session={session}
+                dbReserved={
+                  reservationCounts[session.id] ?? 0
+                }
+                selected={
+                  selectedSession === session.id
+                }
+                onSelect={(sessionId) => {
+                  setSelectedSession(sessionId);
+                  setMessage("");
+                }}
+                myReservation={myReservation}
+                onCancel={handleCancel}
+                canceling={
+                  myReservation
+                    ? cancelingId === myReservation.id
+                    : false
+                }
+                timeConflict={timeConflict}
+              />
+            );
+          })}
         </div>
 
         <button

@@ -8,6 +8,7 @@ export default function SessionCard({
   myReservation = null,
   onCancel,
   canceling = false,
+  timeConflict = false,
 }) {
   const remaining =
     session.capacity -
@@ -17,19 +18,20 @@ export default function SessionCard({
   const isFull = remaining <= 0;
   const isReservedByMe = myReservation !== null;
 
+  const unavailable =
+    isFull ||
+    isReservedByMe ||
+    timeConflict;
+
   return (
     <div
       className={`session-card ${
         selected ? "selected" : ""
       } ${isFull ? "full" : ""} ${
         isReservedByMe ? "my-reservation" : ""
-      }`}
+      } ${timeConflict ? "time-conflict" : ""}`}
       onClick={() => {
-        if (
-          !isFull &&
-          !isReservedByMe &&
-          onSelect
-        ) {
+        if (!unavailable && onSelect) {
           onSelect(session.id);
         }
       }}
@@ -69,6 +71,10 @@ export default function SessionCard({
               ? "취소 중..."
               : "예약 취소"}
           </button>
+        </div>
+      ) : timeConflict ? (
+        <div className="conflict-text">
+          시간 중복
         </div>
       ) : (
         selected &&
