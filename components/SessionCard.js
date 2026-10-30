@@ -2,20 +2,22 @@
 
 export default function SessionCard({
   session,
-  localReserved = 0,
+  dbReserved = 0,
   selected,
   onSelect,
 }) {
   const remaining =
-    session.capacity - session.reserved - localReserved;
+    session.capacity -
+    session.reserved -
+    dbReserved;
 
   const isFull = remaining <= 0;
 
   return (
     <button
-      className={`session-card ${selected ? "selected" : ""} ${
-        isFull ? "full" : ""
-      }`}
+      className={`session-card ${
+        selected ? "selected" : ""
+      } ${isFull ? "full" : ""}`}
       onClick={() => {
         if (!isFull) {
           onSelect(session.id);
@@ -27,7 +29,9 @@ export default function SessionCard({
         <strong>{session.round}회차</strong>
 
         <span>
-          {isFull ? "마감" : `잔여 ${remaining}석`}
+          {isFull
+            ? "마감"
+            : `잔여 ${remaining}석`}
         </span>
       </div>
 

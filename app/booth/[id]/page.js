@@ -9,7 +9,7 @@ import SessionCard from "../../../components/SessionCard";
 
 import {
   addReservation,
-  getReservations,
+  getSessionReservationCount,
 } from "../../../utils/reservation";
 
 export default function BoothDetailPage() {
@@ -17,15 +17,18 @@ export default function BoothDetailPage() {
   const id = Number(params.id);
 
   const [booth, setBooth] = useState(null);
-  const [selectedSession, setSelectedSession] = useState(null);
-  const [reservations, setReservations] = useState([]);
+
+  const [selectedSession, setSelectedSession] =
+    useState(null);
+
+  const [reservationCounts, setReservationCounts] =
+    useState({});
 
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
 
   useEffect(() => {
     loadBooth();
-    setReservations(getReservations());
   }, [id]);
 
   async function loadBooth() {
@@ -75,39 +78,64 @@ export default function BoothDetailPage() {
     };
 
     setBooth(convertedBooth);
+
+    await loadReservationCounts(
+      convertedBooth.sessions
+    );
+
     setLoading(false);
   }
 
-  function getReservedCount(sessionId) {
-    return reservations.filter(
-      (reservation) => reservation.sessionId === sessionId
-    ).length;
+  async function loadReservationCounts(sessions) {
+    const results = await Promise.all(
+      sessions.map(async (session) => {
+        const count =
+          await getSessionReservationCount(
+            session.id
+          );
+
+        return [session.id, count];
+      })
+    );
+
+    setReservationCounts(
+      Object.fromEntries(results)
+    );
   }
 
-  function handleReserve() {
+  async function handleReserve() {
     if (selectedSession === null) {
-      setMessage("예약할 회차를 선택해주세요.");
+      setMessage(
+        "예약할 회차를 선택해주세요."
+      );
       return;
     }
 
     const session = booth.sessions.find(
-      (session) => session.id === selectedSession
+      (session) =>
+        session.id === selectedSession
     );
 
-    const result = addReservation(booth, session);
+    const result =
+      await addReservation(booth, session);
 
     setMessage(result.message);
 
     if (result.success) {
-      setReservations(getReservations());
       setSelectedSession(null);
+
+      await loadReservationCounts(
+        booth.sessions
+      );
     }
   }
 
   if (loading) {
     return (
       <main>
-        <p>부스 정보를 불러오는 중...</p>
+        <p>
+          부스 정보를 불러오는 중...
+        </p>
       </main>
     );
   }
@@ -115,7 +143,9 @@ export default function BoothDetailPage() {
   if (!booth) {
     return (
       <main>
-        <h1>부스를 찾을 수 없습니다.</h1>
+        <h1>
+          부스를 찾을 수 없습니다.
+        </h1>
 
         <Link href="/">
           목록으로 돌아가기
@@ -126,7 +156,10 @@ export default function BoothDetailPage() {
 
   return (
     <main>
-      <Link href="/" className="back-link">
+      <Link
+        href="/"
+        className="back-link"
+      >
         ← 부스 목록
       </Link>
 
@@ -138,31 +171,39 @@ export default function BoothDetailPage() {
         </p>
 
         <p className="booth-location">
-          <strong>장소:</strong> {booth.location}
+          <strong>장소:</strong>{" "}
+          {booth.location}
         </p>
 
         <h2>회차 선택</h2>
 
         <div className="session-list">
-          {booth.sessions.map((session) => {
-            const localReserved =
-              getReservedCount(session.id);
-
-            return (
+          {booth.sessions.map(
+            (session) => (
               <SessionCard
                 key={session.id}
                 session={session}
-                localReserved={localReserved}
-                selected={
-                  selectedSession === session.id
+                dbReserved={
+                  reservationCounts[
+                    session.id
+                  ] ?? 0
                 }
-                onSelect={(sessionId) => {
-                  setSelectedSession(sessionId);
+                selected={
+                  selectedSession ===
+                  session.id
+                }
+                onSelect={(
+                  sessionId
+                ) => {
+                  setSelectedSession(
+                    sessionId
+                  );
+
                   setMessage("");
                 }}
               />
-            );
-          })}
+            )
+          )}
         </div>
 
         <button
