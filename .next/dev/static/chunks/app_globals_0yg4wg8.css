@@ -381,4 +381,69 @@ h1 {
   }
 }
 
+.login-box {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  max-width: 420px;
+  margin: 40px auto;
+  padding: 30px;
+}
+
+.login-box h1 {
+  margin-top: 0;
+}
+
+.login-box form {
+  flex-direction: column;
+  gap: 12px;
+  display: flex;
+}
+
+.login-box input {
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 100%;
+  padding: 13px;
+  font-size: 15px;
+}
+
+.login-box form button {
+  color: #fff;
+  cursor: pointer;
+  background-color: #222;
+  border: none;
+  border-radius: 8px;
+  padding: 13px;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.login-box form button:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+.login-mode-button {
+  cursor: pointer;
+  background: none;
+  border: none;
+  width: 100%;
+  margin-top: 15px;
+  padding: 10px;
+  text-decoration: underline;
+}
+
+.main-actions {
+  gap: 18px;
+  margin-bottom: 20px;
+  display: flex;
+}
+
+.main-actions a {
+  font-weight: bold;
+  text-decoration: none;
+}
+
 /*# sourceMappingURL=app_globals_0yg4wg8.css.map*/

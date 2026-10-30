@@ -13,9 +13,30 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
 
+  const [user, setUser] = useState(null);
+
   useEffect(() => {
     loadBooths();
+    loadUser();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
+
+  async function loadUser() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    setUser(user);
+  }
 
   async function loadBooths() {
     setLoading(true);
@@ -36,6 +57,17 @@ export default function Home() {
     setLoading(false);
   }
 
+  async function handleLogout() {
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    setUser(null);
+  }
+
   const filteredBooths = booths.filter((booth) =>
     booth.name.toLowerCase().includes(search.toLowerCase())
   );
@@ -53,13 +85,34 @@ export default function Home() {
       <h1>재능나눔 부스 예약</h1>
 
       <div className="main-actions">
-        <Link href="/login">
-          로그인 / 회원가입
-        </Link>
+        {user ? (
+          <>
+            <span>
+              로그인됨: <strong>{user.email}</strong>
+            </span>
 
-        <Link href="/schedule">
-          내 시간표
-        </Link>
+            <Link href="/schedule">
+              내 시간표
+            </Link>
+
+            <button
+              className="logout-button"
+              onClick={handleLogout}
+            >
+              로그아웃
+            </button>
+          </>
+        ) : (
+          <>
+            <Link href="/login">
+              로그인 / 회원가입
+            </Link>
+
+            <Link href="/schedule">
+              내 시간표
+            </Link>
+          </>
+        )}
       </div>
 
       <SearchBar

@@ -534,11 +534,27 @@ h1 {
 
 .main-actions {
   display: flex;
+  align-items: center;
   gap: 18px;
+
   margin-bottom: 20px;
 }
 
 .main-actions a {
   text-decoration: none;
   font-weight: bold;
+}
+
+.logout-button {
+  padding: 8px 12px;
+
+  border: 1px solid #ccc;
+  border-radius: 8px;
+
+  background-color: white;
+  cursor: pointer;
+}
+
+.logout-button:hover {
+  background-color: #f0f0f0;
 }
