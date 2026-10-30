@@ -14,6 +14,7 @@ export default function Home() {
   const [errorMessage, setErrorMessage] = useState("");
 
   const [user, setUser] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     loadBooths();
@@ -22,7 +23,16 @@ export default function Home() {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
-      setUser(session?.user ?? null);
+      const currentUser = session?.user ?? null;
+
+      setUser(currentUser);
+
+      if (!currentUser) {
+        setIsAdmin(false);
+        return;
+      }
+
+      loadAdminStatus(currentUser.id);
     });
 
     return () => {
@@ -32,10 +42,35 @@ export default function Home() {
 
   async function loadUser() {
     const {
-      data: { user },
-    } = await supabase.auth.getUser();
+      data: { session },
+    } = await supabase.auth.getSession();
 
-    setUser(user);
+    const currentUser = session?.user ?? null;
+
+    setUser(currentUser);
+
+    if (!currentUser) {
+      setIsAdmin(false);
+      return;
+    }
+
+    await loadAdminStatus(currentUser.id);
+  }
+
+  async function loadAdminStatus(userId) {
+    const { data: profile, error } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", userId)
+      .single();
+
+    if (error) {
+      console.error(error);
+      setIsAdmin(false);
+      return;
+    }
+
+    setIsAdmin(profile?.role === "admin");
   }
 
   async function loadBooths() {
@@ -66,6 +101,7 @@ export default function Home() {
     }
 
     setUser(null);
+    setIsAdmin(false);
   }
 
   const filteredBooths = booths.filter((booth) =>
@@ -90,6 +126,12 @@ export default function Home() {
             <span>
               로그인됨: <strong>{user.email}</strong>
             </span>
+
+            {isAdmin && (
+              <Link href="/admin">
+                관리자 페이지
+              </Link>
+            )}
 
             <Link href="/schedule">
               내 시간표
