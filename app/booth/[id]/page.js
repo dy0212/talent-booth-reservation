@@ -130,17 +130,19 @@ export default function BoothDetailPage() {
     );
   }
 
-  function hasTimeConflict(session) {
-    return myReservations.some((reservation) => {
-      if (reservation.sessionId === session.id) {
-        return false;
-      }
+  function findTimeConflict(session) {
+    return (
+      myReservations.find((reservation) => {
+        if (reservation.sessionId === session.id) {
+          return false;
+        }
 
-      return (
-        session.startTime < reservation.endTime &&
-        reservation.startTime < session.endTime
-      );
-    });
+        return (
+          session.startTime < reservation.endTime &&
+          reservation.startTime < session.endTime
+        );
+      }) ?? null
+    );
   }
 
   async function handleReserve() {
@@ -250,8 +252,8 @@ export default function BoothDetailPage() {
             const myReservation =
               findMyReservation(session.id);
 
-            const timeConflict =
-              hasTimeConflict(session);
+            const conflictReservation =
+              findTimeConflict(session);
 
             return (
               <SessionCard
@@ -274,7 +276,7 @@ export default function BoothDetailPage() {
                     ? cancelingId === myReservation.id
                     : false
                 }
-                timeConflict={timeConflict}
+                conflictReservation={conflictReservation}
               />
             );
           })}

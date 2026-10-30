@@ -630,3 +630,24 @@ h1 {
   font-weight: bold;
   color: #666;
 }
+
+.conflict-area {
+  margin-top: 10px;
+}
+
+.conflict-text {
+  font-weight: bold;
+  color: #666;
+}
+
+.conflict-detail {
+  margin-top: 5px;
+  font-weight: bold;
+  color: #444;
+}
+
+.conflict-time {
+  margin-top: 3px;
+  color: #777;
+  font-size: 14px;
+}
