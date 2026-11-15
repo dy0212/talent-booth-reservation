@@ -12,6 +12,9 @@ import {
   cancelReservation,
   getMyReservations,
   getSessionReservationCounts,
+  joinWaitlist,
+  leaveWaitlist,
+  getWaitlistStatus,
 } from "../../../utils/reservation";
 
 export default function BoothDetailPage() {
@@ -38,6 +41,12 @@ export default function BoothDetailPage() {
   const [cancelingId, setCancelingId] =
     useState(null);
 
+  const [waitlistStatus, setWaitlistStatus] =
+    useState({});
+
+  const [waitlistLoadingId, setWaitlistLoadingId] =
+    useState(null);
+
   useEffect(() => {
     loadPage();
   }, [id]);
@@ -47,6 +56,7 @@ export default function BoothDetailPage() {
 
     await loadBooth();
     await loadMyReservations();
+    await loadWaitlist();
 
     setLoading(false);
   }
@@ -109,6 +119,13 @@ export default function BoothDetailPage() {
     setReservationCounts(counts);
   }
 
+  async function loadWaitlist() {
+    const status =
+      await getWaitlistStatus(id);
+
+    setWaitlistStatus(status);
+  }
+
   async function loadMyReservations() {
     const result =
       await getMyReservations();
@@ -167,6 +184,7 @@ export default function BoothDetailPage() {
       await Promise.all([
         loadCounts(),
         loadMyReservations(),
+        loadWaitlist(),
       ]);
     }
 
@@ -194,10 +212,51 @@ export default function BoothDetailPage() {
       await Promise.all([
         loadCounts(),
         loadMyReservations(),
+        loadWaitlist(),
       ]);
     }
 
     setCancelingId(null);
+  }
+
+  async function handleJoinWaitlist(sessionId) {
+    setWaitlistLoadingId(sessionId);
+    setMessage("");
+
+    const result =
+      await joinWaitlist(sessionId);
+
+    setMessage(result.message);
+
+    if (result.success) {
+      await loadWaitlist();
+    }
+
+    setWaitlistLoadingId(null);
+  }
+
+  async function handleLeaveWaitlist(sessionId) {
+    const ok = window.confirm(
+      "대기 신청을 취소하시겠습니까?"
+    );
+
+    if (!ok) {
+      return;
+    }
+
+    setWaitlistLoadingId(sessionId);
+    setMessage("");
+
+    const result =
+      await leaveWaitlist(sessionId);
+
+    setMessage(result.message);
+
+    if (result.success) {
+      await loadWaitlist();
+    }
+
+    setWaitlistLoadingId(null);
   }
 
   if (loading) {
@@ -253,7 +312,13 @@ export default function BoothDetailPage() {
               findMyReservation(session.id);
 
             const conflictReservation =
-              findTimeConflict(session);
+              findTimeConflict(session)
+
+            const waitlist =
+              waitlistStatus[session.id] ?? {
+                count: 0,
+                myPosition: null,
+              };
 
             return (
               <SessionCard
@@ -277,6 +342,13 @@ export default function BoothDetailPage() {
                     : false
                 }
                 conflictReservation={conflictReservation}
+                waitlistCount={waitlist.count}
+                myWaitlistPosition={waitlist.myPosition}
+                onJoinWaitlist={handleJoinWaitlist}
+                onLeaveWaitlist={handleLeaveWaitlist}
+                waitlistLoading={
+                  waitlistLoadingId === session.id
+                }
               />
             );
           })}

@@ -9,6 +9,11 @@ export default function SessionCard({
   onCancel,
   canceling = false,
   conflictReservation = null,
+  waitlistCount = 0,
+  myWaitlistPosition = null,
+  onJoinWaitlist,
+  onLeaveWaitlist,
+  waitlistLoading = false,
 }) {
   const remaining =
     session.capacity -
@@ -89,9 +94,54 @@ export default function SessionCard({
             {conflictReservation.endTime}
           </div>
         </div>
+      ) : isFull ? (
+        <div className="waitlist-area">
+          <div className="waitlist-info">
+            대기 {waitlistCount}명
+            {myWaitlistPosition !== null && (
+              <>
+                {" · "}
+                내 순번 {myWaitlistPosition}번째
+              </>
+            )}
+          </div>
+
+          {myWaitlistPosition !== null ? (
+            <button
+              className="waitlist-cancel-button"
+              disabled={waitlistLoading}
+              onClick={(e) => {
+                e.stopPropagation();
+
+                if (onLeaveWaitlist) {
+                  onLeaveWaitlist(session.id);
+                }
+              }}
+            >
+              {waitlistLoading
+                ? "처리 중..."
+                : "대기 취소"}
+            </button>
+          ) : (
+            <button
+              className="waitlist-button"
+              disabled={waitlistLoading}
+              onClick={(e) => {
+                e.stopPropagation();
+
+                if (onJoinWaitlist) {
+                  onJoinWaitlist(session.id);
+                }
+              }}
+            >
+              {waitlistLoading
+                ? "처리 중..."
+                : "대기 신청"}
+            </button>
+          )}
+        </div>
       ) : (
-        selected &&
-        !isFull && (
+        selected && (
           <div className="selected-text">
             선택됨
           </div>

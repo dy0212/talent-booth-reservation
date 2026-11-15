@@ -134,10 +134,12 @@ export async function cancelReservation(reservationId) {
     };
   }
 
-  const { error } = await supabase
-    .from("reservations")
-    .delete()
-    .eq("id", reservationId);
+  const { data, error } = await supabase.rpc(
+    "cancel_reservation",
+    {
+      p_reservation_id: reservationId,
+    }
+  );
 
   if (error) {
     console.error(error);
@@ -148,8 +150,95 @@ export async function cancelReservation(reservationId) {
     };
   }
 
-  return {
-    success: true,
-    message: "예약을 취소했습니다.",
-  };
+  return data;
+}
+
+export async function joinWaitlist(sessionId) {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return {
+      success: false,
+      message: "로그인 후 대기 신청할 수 있습니다.",
+    };
+  }
+
+  const { data, error } = await supabase.rpc(
+    "join_waitlist",
+    {
+      p_session_id: sessionId,
+    }
+  );
+
+  if (error) {
+    console.error(error);
+
+    return {
+      success: false,
+      message: "대기 신청 중 오류가 발생했습니다.",
+    };
+  }
+
+  return data;
+}
+
+export async function leaveWaitlist(sessionId) {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return {
+      success: false,
+      message: "로그인이 필요합니다.",
+    };
+  }
+
+  const { data, error } = await supabase.rpc(
+    "leave_waitlist",
+    {
+      p_session_id: sessionId,
+    }
+  );
+
+  if (error) {
+    console.error(error);
+
+    return {
+      success: false,
+      message: "대기 취소 중 오류가 발생했습니다.",
+    };
+  }
+
+  return data;
+}
+
+export async function getWaitlistStatus(boothId) {
+  const { data, error } = await supabase.rpc(
+    "get_waitlist_status",
+    {
+      p_booth_id: boothId,
+    }
+  );
+
+  if (error) {
+    console.error(error);
+    return {};
+  }
+
+  const status = {};
+
+  for (const row of data ?? []) {
+    status[row.session_id] = {
+      count: Number(row.waitlist_count),
+      myPosition:
+        row.my_position === null
+          ? null
+          : Number(row.my_position),
+    };
+  }
+
+  return status;
 }
