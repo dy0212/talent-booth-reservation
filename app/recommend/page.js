@@ -8,6 +8,7 @@ import { supabase } from "../../lib/supabase";
 import {
   getMyReservations,
   getSessionReservationCounts,
+  reserveRecommendation,
 } from "../../utils/reservation";
 
 export default function RecommendPage() {
@@ -25,6 +26,9 @@ export default function RecommendPage() {
 
   const [recommendations, setRecommendations] =
     useState([]);
+
+  const [bookingIndex, setBookingIndex] =
+    useState(null);
 
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
@@ -402,6 +406,72 @@ export default function RecommendPage() {
     }
   }
 
+  async function handleBookRecommendation(
+  recommendation,
+  index
+) {
+  const sessionIds = recommendation
+    .filter(
+      (session) =>
+        !session.alreadyReserved
+    )
+    .map((session) => session.id);
+
+  if (sessionIds.length === 0) {
+    setMessage(
+      "이 일정의 회차는 이미 모두 예약되어 있습니다."
+    );
+    return;
+  }
+
+  setBookingIndex(index);
+
+  const result =
+    await reserveRecommendation(
+      sessionIds,
+      bufferMinutes
+    );
+
+  if (result.success) {
+    setMessage(
+      `${result.createdCount}개 회차를 예약했습니다.`
+    );
+
+    setRecommendations([]);
+
+    await loadData();
+
+    setBookingIndex(null);
+    return;
+  }
+
+
+  // 추천 후 누군가 마지막 자리를 예약한 경우
+  if (
+    result.reason === "full" &&
+    result.failedBoothName
+  ) {
+    setMessage(
+      `${result.failedBoothName} · ${result.failedRound}회차 ` +
+      `(${result.failedStartTime} ~ ${result.failedEndTime})가 ` +
+      `추천 이후 마감되었습니다. ` +
+      `아무 회차도 예약하지 않았습니다. 다시 추천해주세요.`
+    );
+  } else {
+    setMessage(
+      `${result.message} 아무 회차도 예약하지 않았습니다. 다시 추천해주세요.`
+    );
+  }
+
+  // 오래된 추천 결과 제거
+  setRecommendations([]);
+
+  // 최신 잔여석 다시 불러오기
+  await loadData();
+
+  setBookingIndex(null);
+}
+
   if (loading) {
     return (
       <main>
@@ -509,6 +579,12 @@ export default function RecommendPage() {
           <div className="recommend-results">
             <h2>추천 결과</h2>
 
+            <p className="recommend-notice">
+              잔여석은 추천 시점 기준입니다.
+              예약을 확정할 때 최신 잔여석과 시간 조건을
+              다시 확인합니다.
+            </p>
+
             {recommendations.map(
               (recommendation, index) => (
                 <div
@@ -582,6 +658,21 @@ export default function RecommendPage() {
                       )
                     )}
                   </div>
+                  
+                  <button
+                    className="recommend-book-button"
+                    disabled={bookingIndex !== null}
+                    onClick={() =>
+                      handleBookRecommendation(
+                        recommendation,
+                        index
+                      )
+                    }
+                  >
+                    {bookingIndex === index
+                      ? "최신 상태 확인 중..."
+                      : "이 조합으로 예약하기"}
+                  </button>
                 </div>
               )
             )}

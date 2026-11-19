@@ -242,3 +242,39 @@ export async function getWaitlistStatus(boothId) {
 
   return status;
 }
+
+export async function reserveRecommendation(
+  sessionIds,
+  bufferMinutes
+) {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return {
+      success: false,
+      message: "로그인 후 예약할 수 있습니다.",
+    };
+  }
+
+  const { data, error } = await supabase.rpc(
+    "create_reservation_bundle",
+    {
+      p_session_ids: sessionIds,
+      p_buffer_minutes: bufferMinutes,
+    }
+  );
+
+  if (error) {
+    console.error(error);
+
+    return {
+      success: false,
+      message:
+        "추천 일정 예약 중 오류가 발생했습니다.",
+    };
+  }
+
+  return data;
+}
