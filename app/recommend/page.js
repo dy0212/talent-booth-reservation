@@ -334,30 +334,75 @@ export default function RecommendPage() {
         )
       )
       .sort((a, b) => {
-        // 1순위: 더 많은 부스를 들을 수 있는 조합
-        if (b.length !== a.length) {
-          return b.length - a.length;
-        }
+  // 1순위: 더 많은 부스를 들을 수 있는 조합
+  if (b.length !== a.length) {
+    return b.length - a.length;
+  }
 
-        // 2순위: 남은 좌석이 많은 조합
-        const aRemaining =
-          a.reduce(
-            (sum, session) =>
-              sum +
-              (session.remaining ?? 0),
-            0
-          );
+  // 2순위: 불필요한 대기 시간이 적은 조합
+  function getTotalGap(schedule) {
+    let totalGap = 0;
 
-        const bRemaining =
-          b.reduce(
-            (sum, session) =>
-              sum +
-              (session.remaining ?? 0),
-            0
-          );
+    for (let i = 0; i < schedule.length - 1; i++) {
+      const currentEnd =
+        timeToMinutes(schedule[i].endTime);
 
-        return bRemaining - aRemaining;
-      });
+      const nextStart =
+        timeToMinutes(schedule[i + 1].startTime);
+
+      const gap =
+        nextStart - currentEnd;
+
+      totalGap += Math.max(
+        0,
+        gap - bufferMinutes
+      );
+    }
+
+    return totalGap;
+  }
+
+  const aGap = getTotalGap(a);
+  const bGap = getTotalGap(b);
+
+  if (aGap !== bGap) {
+    return aGap - bGap;
+  }
+
+  // 3순위: 남은 좌석이 많은 조합
+  const aRemaining =
+    a.reduce(
+      (sum, session) =>
+        sum +
+        (session.remaining ?? 0),
+      0
+    );
+
+  const bRemaining =
+    b.reduce(
+      (sum, session) =>
+        sum +
+        (session.remaining ?? 0),
+      0
+    );
+
+  if (aRemaining !== bRemaining) {
+    return bRemaining - aRemaining;
+  }
+
+  // 4순위: 더 일찍 끝나는 조합
+  const aEnd =
+    timeToMinutes(
+      a[a.length - 1].endTime
+    );
+
+  const bEnd =
+    timeToMinutes(
+      b[b.length - 1].endTime
+    );
+
+  return aEnd - bEnd;
+});
 
     const unique = [];
     const seen = new Set();
@@ -658,7 +703,7 @@ export default function RecommendPage() {
                       )
                     )}
                   </div>
-                  
+
                   <button
                     className="recommend-book-button"
                     disabled={bookingIndex !== null}
