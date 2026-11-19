@@ -763,3 +763,174 @@ h1 {
     flex-direction: column;
   }
 }
+
+/* 일정 추천 */
+
+.recommend-page {
+  padding: 30px;
+
+  background-color: white;
+
+  border: 1px solid #ddd;
+  border-radius: 12px;
+}
+
+.recommend-description {
+  margin-bottom: 30px;
+
+  line-height: 1.7;
+  color: #555;
+}
+
+.recommend-booth-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 12px;
+
+  margin-bottom: 30px;
+}
+
+.recommend-booth {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  gap: 6px;
+
+  padding: 16px;
+
+  border: 2px solid #ddd;
+  border-radius: 10px;
+
+  background-color: white;
+
+  text-align: left;
+  cursor: pointer;
+}
+
+.recommend-booth:hover {
+  border-color: #999;
+}
+
+.recommend-booth.selected {
+  border-color: #222;
+  background-color: #f0f0f0;
+}
+
+.recommend-booth span {
+  font-size: 14px;
+  color: #666;
+}
+
+.buffer-options {
+  display: flex;
+  gap: 10px;
+
+  margin-bottom: 25px;
+}
+
+.buffer-options button {
+  padding: 10px 18px;
+
+  border: 1px solid #ccc;
+  border-radius: 8px;
+
+  background-color: white;
+
+  cursor: pointer;
+}
+
+.buffer-options button.selected {
+  background-color: #222;
+  color: white;
+
+  border-color: #222;
+}
+
+.recommend-button {
+  width: 100%;
+
+  padding: 14px;
+
+  border: none;
+  border-radius: 10px;
+
+  background-color: #222;
+  color: white;
+
+  font-size: 16px;
+  font-weight: bold;
+
+  cursor: pointer;
+}
+
+.recommend-button:hover {
+  background-color: #444;
+}
+
+.recommend-message {
+  margin-top: 18px;
+  padding: 14px;
+
+  border-radius: 8px;
+
+  background-color: #f5f5f5;
+
+  font-weight: bold;
+}
+
+.recommend-results {
+  margin-top: 30px;
+}
+
+.recommend-result-card {
+  margin-bottom: 18px;
+  padding: 20px;
+
+  border: 1px solid #ddd;
+  border-radius: 10px;
+}
+
+.recommend-result-card h3 {
+  margin-top: 0;
+}
+
+.recommend-schedule {
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+
+  margin-top: 15px;
+}
+
+.recommend-session {
+  padding: 14px;
+
+  border-radius: 8px;
+
+  background-color: #f7f7f7;
+
+  line-height: 1.6;
+}
+
+.recommend-reserved {
+  display: inline-block;
+
+  margin-left: 8px;
+  padding: 2px 7px;
+
+  border-radius: 10px;
+
+  background-color: #222;
+  color: white;
+
+  font-size: 12px;
+}
+
+@media (max-width: 700px) {
+  .recommend-booth-list {
+    grid-template-columns: 1fr;
+  }
+}

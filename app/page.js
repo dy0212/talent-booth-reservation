@@ -137,6 +137,10 @@ export default function Home() {
               내 시간표
             </Link>
 
+            <Link href="/recommend">
+              일정 추천
+            </Link>
+
             <button
               className="logout-button"
               onClick={handleLogout}
